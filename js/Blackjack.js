@@ -6,6 +6,7 @@ class Blackjack {
     let faceValues = ['Jack', 'Queen', 'King'];
     let suits = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
     this.deck = [];
+    // Step 1: Make and shuffle deck of cards
 
     // Loop through all suits
     for (let i = 0; i < suits.length; i++) {
@@ -59,14 +60,35 @@ class Blackjack {
     // App div
 
     // Header
+    this.header = document.createElement('header');
+    // insertBefore: Inserts the first parameter(an HTML element) before the second parameter(another HTML element)
+    document.body.insertBefore(this.header, document.body.firstChild);
 
-    // Buttons
+    // Buttons - DEAL/HIT/STAND
+    this.btnDeal = document.createElement('button');
+    this.btnDeal.innerHTML = 'DEAL';
+    this.btnDeal.addEventListener('click', this.deal.bind(this));
+    // bind is a way to redefine the meaning of the 'this' keyword within a method. if we do not bind 'this' onto the event listener, 'this' will be the button inside the method. If we bind 'this', it will be the blackjack object.
+    this.header.appendChild(this.btnDeal);
 
+    this.btnHit = document.createElement('button');
+    this.btnHit.innerHTML = 'HIT';
+    this.btnHit.addEventListener('click', this.hit.bind(this));
+    this.header.appendChild(this.btnHit);
+
+    this.btnStand = document.createElement('button');
+    this.btnStand.innerHTML = 'STAND';
+    this.btnStand.addEventListener('click', this.stand.bind(this));
+    this.header.appendChild(this.btnStand);
     // Divs for the header
 
     // Divs for card boxes on table
-
-    //this.app.innerHTML = `Hello from the Blackjack Class!`;
   }
-  // Step 1: Make and shuffle deck of cards
+  // By default 'this' would refer to the element that called this method
+  // Because we bound 'this' in the constructor to the blackjack object, 'this' will be the blackjack object
+  deal() {
+    console.log(this);
+  }
+  hit() {}
+  stand() {}
 }
