@@ -217,20 +217,111 @@ class Blackjack {
     console.log('in hit');
     // Add another card for the player
     // pop from array and store in players hand
+    // let hitCard = this.deck.pop(); // Alternate way to store the card
     this.playerHand.push(this.deck.pop());
+    this.hitCard = this.playerHand[this.playerHand.length - 1];
 
     // create new image for that card
     let cardPic = new Image();
-    cardPic.src =
-      'images/cards350px/' +
-      this.playerHand[this.playerHand.length - 1].fileName; // Add the most recent card's fileName
+    cardPic.src = 'images/cards350px/' + this.hitCard.fileName; // Add the most recent card's fileName
     // add image to the box
     this.playerCardBox.appendChild(cardPic);
     console.log(cardPic);
+
     // add cardvalue to the score
-    // see if player is at or over 21
+    // If the current card is an Ace:
+    if (this.hitCard.cardValue === 'Ace') {
+      // Check current score for player
+      if (this.playerScore < 11) {
+        // Make the ace worth 11
+        this.playerScore += 11;
+        this.playerAceScore += 11;
+      } else {
+        // Make the ace worth 1
+        this.playerScore++;
+        this.playerAceScore++;
+      }
+    } else {
+      this.playerScore += this.hitCard.numVal;
+    }
+    // Update player score box
+    this.playerScoreBox.innerHTML = 'Player: ' + this.playerScore;
+
+    // What if the player busts?
+    if (this.playerScore > 21) {
+      if (this.playerAceScore >= 11) {
+        // They have a high-value ace, so lets save them by reducing it
+        this.playerAceScore -= 10;
+        this.playerScore -= 10;
+        this.playerScoreBox.innerHTML = 'Player: ' + this.playerScore;
+      } else {
+        // they have no ace, so they lose
+        this.messageBox.innerHTML = 'BUSTED!<br/>YOU LOSE';
+
+        // Disable buttons
+        this.btnHit.disabled = 'true';
+        this.btnHit.style.opacity = '0.7';
+        this.btnStand.disabled = 'true';
+        this.btnStand.style.opacity = '0.7';
+      }
+    }
+    //this.playerScore = 21; // Test functionality
+    // See if they won
+    if (this.playerScore === 21) {
+      // The player has won, disable the buttons and have the dealer play out their hand
+      // Disable buttons
+      this.btnHit.disabled = 'true';
+      this.btnHit.style.opacity = '0.7';
+      this.btnStand.disabled = 'true';
+      this.btnStand.style.opacity = '0.7';
+
+      // Tell the player they have 21, so the dealer will take their turn
+      this.messageBox.innerHTML = `YOU HAVE 21!<br/>DEALER'S TURN!`;
+
+      setTimeout(() => {
+        this.stand();
+      }, 1000);
+    }
   }
-  stand() {}
+  stand() {
+    // Disable buttons
+    this.btnHit.disabled = 'true';
+    this.btnHit.style.opacity = '0.7';
+    this.btnStand.disabled = 'true';
+    this.btnStand.style.opacity = '0.7';
+
+    // Flip the hole card
+    setTimeout(() => {
+      // start by revealing the hole card and displaying the 'true' dealer score
+      this.dealerCardBox.children[1].src =
+        'images/cards350px/' + this.dealerHand[1].fileName;
+      this.dealerScoreBox.innerHTML = 'Dealer: ' + this.dealerScore;
+    }, 1250);
+
+    setTimeout(() => {
+      // If the dealer should grab another card, make them
+      if (
+        this.dealerScore < 17 ||
+        (this.dealerScore == 17 && this.dealerAceScore >= 11)
+      ) {
+        this.dealerCard = this.deck.pop(); // dealer's new card obj
+        let cardPic = new Image(); // make a card image
+        cardPic.src = 'images/cards350px/' + this.dealerCard.fileName;
+
+        // output the card pic to the dealer card box
+        this.dealerCardBox.appendChild(cardPic);
+
+        this.dealerScore += this.dealerCard.numVal;
+      }
+
+      if (
+        this.dealerScore < 17 ||
+        (this.dealerScore == 17 && this.dealerAceScore >= 11)
+      ) {
+        this.stand();
+      }
+    }, 2500); // setTimeout
+  }
 
   buildDOM() {
     // Header
