@@ -66,11 +66,25 @@ class Blackjack {
     this.playerScore = 0;
     this.dealerScore = 0;
 
+    // keep track of the value of all aces played
+    this.playerAceScore = 0;
+    this.dealerAceScore = 0;
+
     this.playerCardBox.innerHTML = '';
     this.dealerCardBox.innerHTML = '';
 
     this.playerScoreBox.innerHTML = 'Player: 0';
     this.dealerScoreBox.innerHTML = 'Dealer: 0';
+
+    this.messageBox.innerHTML = '';
+
+    this.btnHit.disabled = false;
+    this.btnStand.disabled = false;
+    this.btnHit.style.opacity = '1';
+    this.btnStand.style.opacity = '1';
+
+    this.myMoney -= 10;
+    this.moneyBox.innerHTML = '$' + this.myMoney;
 
     setTimeout(() => {
       // Add card to player hand
@@ -86,6 +100,11 @@ class Blackjack {
       this.playerScore += this.playerHand[0].numVal;
       this.playerScoreBox.innerHTML = 'Player: ' + this.playerScore;
       console.log(this.playerHand);
+
+      // keep separate score of player aces
+      if (this.playerHand[0].cardValue == 'Ace') {
+        this.playerAceScore += 11;
+      }
     }, 1000); // Player first card
 
     setTimeout(() => {
@@ -99,6 +118,11 @@ class Blackjack {
       this.dealerScore += this.dealerHand[0].numVal;
       this.dealerScoreBox.innerHTML = 'Dealer: ' + this.dealerHand[0].cardValue;
       console.log(this.dealerHand);
+
+      // keep separate score of player aces
+      if (this.dealerHand[0].cardValue == 'Ace') {
+        this.dealerAceScore += 11;
+      }
     }, 2000); // Dealer first card
 
     setTimeout(() => {
@@ -121,6 +145,11 @@ class Blackjack {
         this.playerScore -= 10;
         this.playerScoreBox.innerHTML = 'Player: ' + this.playerScore;
       }
+
+      // keep separate score of player aces
+      if (this.playerHand[1].cardValue == 'Ace') {
+        this.playerAceScore += 11;
+      }
     }, 3000); // Player second card
 
     setTimeout(() => {
@@ -137,6 +166,10 @@ class Blackjack {
         this.dealerScore -= 10;
         this.dealerScoreBox.innerHTML = '';
       }
+      // keep separate score of player aces
+      if (this.dealerHand[1].cardValue == 'Ace') {
+        this.dealerAceScore += 11;
+      }
     }, 4000); // Dealer second card
 
     setTimeout(() => {
@@ -146,8 +179,7 @@ class Blackjack {
         If both won, do not change
 
       */
-      this.dealerScore = 21;
-      this.playerScore = 21;
+
       if (this.playerScore == 21 || this.dealerScore == 21) {
         // Disable buttons to force them to click 'deal' to continue
         this.btnHit.disabled = 'true';
@@ -173,25 +205,31 @@ class Blackjack {
           }
           // If only dealer won
           else if (this.dealerScore === 21) {
-            this.myMoney -= 10;
-            this.moneyBox.innerHTML = '$' + this.myMoney;
             this.messageBox.innerHTML = 'DEALER HAS BLACKJACK!<br/>YOU LOSE!';
           }
         }
+      } else {
+        this.messageBox.innerHTML = 'HIT OR STAND';
       }
     }, 4500);
-
-    // what we should have at the end:
-    /*
-      2 cards for the dealer
-      2 card for the player
-      All cards should be displayed
-      The dealer's face up card should be in his box 
-      The player's cards should be tallied
-      Let the player know if they won, or if they need to choose hit/stand
-    */
   }
-  hit() {}
+  hit() {
+    console.log('in hit');
+    // Add another card for the player
+    // pop from array and store in players hand
+    this.playerHand.push(this.deck.pop());
+
+    // create new image for that card
+    let cardPic = new Image();
+    cardPic.src =
+      'images/cards350px/' +
+      this.playerHand[this.playerHand.length - 1].fileName; // Add the most recent card's fileName
+    // add image to the box
+    this.playerCardBox.appendChild(cardPic);
+    console.log(cardPic);
+    // add cardvalue to the score
+    // see if player is at or over 21
+  }
   stand() {}
 
   buildDOM() {
